@@ -1,0 +1,180 @@
+[bwang4@linux11105 coen233_assignment_01]$ ./myserver
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      236
+packet_type=    0xFFF1
+segment_no=     0
+length= 22
+payload=        rando message number 1
+end=    0xFFFF
+Packet OK!
+ACK packet formatted properly!
+
+
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      236
+packet_type=    0xFFF1
+segment_no=     1
+length= 22
+payload=        rando message number 2
+end=    0xFFFF
+Packet OK!
+ACK packet formatted properly!
+
+
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      236
+packet_type=    0xFFF1
+segment_no=     2
+length= 22
+payload=        rando message number 3
+end=    0xFFFF
+Packet OK!
+ACK packet formatted properly!
+
+
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      236
+packet_type=    0xFFF1
+segment_no=     3
+length= 22
+payload=        rando message number 4
+end=    0xFFFF
+Packet OK!
+ACK packet formatted properly!
+
+
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      236
+packet_type=    0xFFF1
+segment_no=     4
+length= 22
+payload=        rando message number 5
+end=    0xFFFF
+Packet OK!
+ACK packet formatted properly!
+SERVER RESETTING SEQ NUM AND SEQ STARTED
+
+
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      123
+packet_type=    0xFFF1
+segment_no=     0
+length= 50
+payload=        Starting error handling testing. Correct message 1
+end=    0xFFFF
+Packet OK!
+ACK packet formatted properly!
+
+
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      123
+packet_type=    0xFFF1
+segment_no=     0
+length= 92
+payload=        Case 4: Duplicate Packet check done by comparing sequence number as specified in instruction
+end=    0xFFFF
+ERROR: Duplicate packet received!
+Packet Rejected with REJ sub code 0xFFF7
+REJ packet formatted properly!
+Sending response REJ packet: 
+start=  0xFFFF
+client_id=      123
+packet_type=    0xFFF3
+sub_code=       FFF7
+received_segment_no=    0
+end=    0xFFFF
+
+
+
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      123
+packet_type=    0xFFF1
+segment_no=     2
+length= 38
+payload=        Case 1: Out of Sequence segment number
+end=    0xFFFF
+Error: Expected sequence number 1
+ERROR: Out of order packet!
+Packet Rejected with REJ sub code 0xFFF4
+REJ packet formatted properly!
+Sending response REJ packet: 
+start=  0xFFFF
+client_id=      123
+packet_type=    0xFFF3
+sub_code=       FFF4
+received_segment_no=    0
+end=    0xFFFF
+
+
+
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      123
+packet_type=    0xFFF1
+segment_no=     1
+length= 24
+payload=        Case 2: Length Mismatch
+end=    0xFFFF
+ERROR: Length Mismatch!
+Packet Rejected with REJ sub code 0xFFF5
+REJ packet formatted properly!
+Sending response REJ packet: 
+start=  0xFFFF
+client_id=      123
+packet_type=    0xFFF3
+sub_code=       FFF5
+received_segment_no=    0
+end=    0xFFFF
+
+
+
+
+Received packet!
+Received data packet: 
+start=  0xFFFF
+client_id=      123
+packet_type=    0xFFF1
+segment_no=     1
+length= 29
+payload=        Case 3: End of Packet Missing
+end=    0xFFF0
+ERROR: End of Packet Missing!
+Packet Rejected with REJ sub code 0xFFF6
+REJ packet formatted properly!
+Sending response REJ packet: 
+start=  0xFFFF
+client_id=      123
+packet_type=    0xFFF3
+sub_code=       FFF6
+received_segment_no=    0
+end=    0xFFFF
+
+
+
+^C

@@ -1,0 +1,26 @@
+[bwang4@linux11105 coen233_assignment_01]$ ./myserver
+
+Received packet!
+
+Received packet!
+
+Received packet!
+
+Received packet!
+
+Received packet!
+
+Received packet!
+
+Received packet!
+ERROR: Duplicate packet received!
+
+Received packet!
+ERROR: Out of order packet!
+
+Received packet!
+ERROR: Length Mismatch!
+
+Received packet!
+ERROR: End of Packet Missing!
+^C

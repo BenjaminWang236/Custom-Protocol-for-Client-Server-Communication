@@ -1,0 +1,11 @@
+Please enter the message: DATA LENGTH: 16
+Raw reject packet: 0x                                A1273FB0
+Error: Invalid start packet 0x000A
+ERROR: REJ packet formatted improperly!
+Received REJECT packet: 
+start=	0x000A
+client_id=	0
+packet_type=	0x0000
+sub_code=	0000
+received_segment_no=	0
+end=	0xFFFF

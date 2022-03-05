@@ -1,0 +1,44 @@
+Sending packet: 0
+Received matching ACK segment number 0
+Received valid ACK packet.
+
+Sending packet: 1
+Received matching ACK segment number 1
+Received valid ACK packet.
+
+Sending packet: 2
+Received matching ACK segment number 2
+Received valid ACK packet.
+
+Sending packet: 3
+Received matching ACK segment number 3
+Received valid ACK packet.
+
+Sending packet: 4
+Received matching ACK segment number 4
+Received valid ACK packet.
+
+Sending packet: 0
+Received matching ACK segment number 0
+Received valid ACK packet.
+
+Error handling: Case 4: Duplicate Packet check done by comparing sequence number as specified in instruction
+Sending packet: 0
+Received valid REJ packet
+Reject sub code: 0xFFF7
+
+Error handling: Case 1: Out of Sequence segment number
+Sending packet: 2
+Received valid REJ packet
+Reject sub code: 0xFFF4
+
+Error handling: Case 2: Length Mismatch
+Sending packet: 1
+Received valid REJ packet
+Reject sub code: 0xFFF5
+
+Error handling: Case 3: End of Packet Missing
+Sending packet: 1
+Received valid REJ packet
+Reject sub code: 0xFFF6
+

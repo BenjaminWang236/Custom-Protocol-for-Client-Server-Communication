@@ -1,0 +1,99 @@
+[bwang4@linux11105 coen233_assignment_01]$ time ./myclient ./input_files/test_input.txt > ./output_files/test_output_client_noServer.txt
+Sending packet: 0
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Sending packet: 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Sending packet: 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Sending packet: 3
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Sending packet: 4
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Sending packet: 0
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Error handling: Case 4: Duplicate Packet check done by comparing sequence number as specified in instruction
+Sending packet: 0
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Error handling: Case 1: Out of Sequence segment number
+Sending packet: 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Error handling: Case 2: Length Mismatch
+Sending packet: 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Error handling: Case 3: End of Packet Missing
+Sending packet: 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+
+real    2m0.027s
+user    0m0.006s
+sys     0m0.009s

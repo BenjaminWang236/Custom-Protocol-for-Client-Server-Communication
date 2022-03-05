@@ -1,0 +1,31 @@
+10
+236
+0
+rando message number 1
+236
+1
+rando message number 2
+236
+2
+rando message number 3
+236
+3
+rando message number 4
+236
+4
+rando message number 5
+123
+0
+Starting error handling testing. Correct message 1
+123
+0
+Case 4: Duplicate Packet check done by comparing sequence number as specified in instruction
+123
+2
+Case 1: Out of Sequence segment number
+123
+1
+Case 2: Length Mismatch
+123
+1
+Case 3: End of Packet Missing
