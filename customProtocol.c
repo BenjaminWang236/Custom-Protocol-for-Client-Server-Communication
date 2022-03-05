@@ -1,9 +1,11 @@
 /**
- * @file customProtocol.h
+ * @file customProtocol.c
  * @author Benjamin Wang (bwang4@scu.edu, ID: 1179478)
- * @brief Client using customized protocol on top of UDP protocol for sending
- * information to the server. Header file implementing the CUSTOM PROTOCOL
- * @date 2022-03-02
+ * @brief Client using customized protocol on top of UDP protocol for requesting
+ *      identification from server for access permission to the cellular network.
+ *      Header file implementing the CUSTOM PROTOCOL
+ * @version 0.2
+ * @date 2022-03-05
  *
  * @copyright Copyright (c) 2022
  *

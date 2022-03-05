@@ -1,10 +1,11 @@
 /**
  * @file myserver.c
  * @author Benjamin Wang (bwang4@scu.edu, ID: 1179478)
- * @brief Client using customized protocol on top of UDP protocol for sending
- * information to the server. Server side implementation of UDP client-server.
- * @version 0.1
- * @date 2022-03-02
+ * @brief Client using customized protocol on top of UDP protocol for requesting
+ *      identification from server for access permission to the cellular network.
+ *      Implement the server and the access permission identification.
+ * @version 0.2
+ * @date 2022-03-05
  *
  * @copyright Copyright (c) 2022
  * @source: https://www.linuxhowtos.org/C_C++/socket.htm

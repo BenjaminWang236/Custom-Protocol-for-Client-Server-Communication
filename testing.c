@@ -1,10 +1,11 @@
 /**
  * @file generateTestInputs.c
  * @author Benjamin Wang (bwang4@scu.edu, ID: 1179478)
- * @brief Client using customized protocol on top of UDP protocol for sending
- * information to the server. Generate the test cases as input files, and also debugging
- * @version 0.1
- * @date 2022-03-02
+ * @brief Client using customized protocol on top of UDP protocol for requesting
+ *      identification from server for access permission to the cellular network.
+ *      Generate the tests, and also debugging
+ * @version 0.2
+ * @date 2022-03-05
  *
  * @copyright Copyright (c) 2022
  *
@@ -40,7 +41,8 @@ int main(int argc, char *argv[])
     {
         error("Error opening file");
     }
-    while ((read = getline(&line, &len, fp)) != -1) {
+    while ((read = getline(&line, &len, fp)) != -1)
+    {
         printf("Retrieved line of length %zu:\n", read);
         printf("%s", line);
     }
@@ -65,7 +67,6 @@ int main(int argc, char *argv[])
     // printf("payload: %s\n", data_packet.payload);
     printf("data_packet_to_string: %s", data_packet_to_string(&data_packet));
     printf("payload length: strlen: %lu\tsizeof: %lu\n", strlen(data_packet.payload), sizeof(data_packet.payload));
-
 
     return EXIT_SUCCESS;
 }
