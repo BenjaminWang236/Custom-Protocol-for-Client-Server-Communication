@@ -48,6 +48,8 @@ Individual compilation options are also available within the `Makefile`
 ## How to Run the Code
 Open two terminals on the same computer. By default Port number `8080` and host "`localhost`" are used. Navigate to project's main folder first!
 
+Tested successfully (compilation and running executables) on my own PC and SCU's ECC Linux computer.
+
 ---
 ### Run Server
 ```C
