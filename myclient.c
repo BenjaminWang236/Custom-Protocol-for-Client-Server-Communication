@@ -30,10 +30,10 @@ int main(int argc, char *argv[])
     unsigned int length = sizeof(struct sockaddr_in);
     struct hostent *hp;
     char buffer[PACKET_DATA_PAYLOAD_SIZE];
-    uint8_t peek_buff[1];
     bool response_received = false;
     struct timeval tv;
-    uint8_t client_id, seg_no = 0, buffLen, input_seg_no;
+    uint8_t client_id, seg_no = 0, input_seg_no = 0, technology = 0;
+    uint32_t src_sub_no = 0;
 
     // Default port number and hostname
     char *host = HOSTNAME;
@@ -79,13 +79,10 @@ int main(int argc, char *argv[])
           hp->h_length);
     server.sin_port = htons(port);
 
-    // Custom Protocol Packets:
-    data_packet_t data_packet = {};
-    size_t data_packet_size = sizeof(data_packet);
-    ack_packet_t ack_packet = {};
-    size_t ack_packet_size = sizeof(ack_packet);
-    reject_packet_t reject_packet = {};
-    size_t reject_packet_size = sizeof(reject_packet);
+    // Custom protocol's Subscriber Packets:
+    subscriber_packet_t subscriber_packet = {};
+    uint8_t subscriber_packet_size = sizeof(subscriber_packet);
+    SUBSCRIBER_PACKET_TYPE subscriber_status = DEFAULT_VALUE;
 
     // Loop through all the segments:
     for (seg_no = 0; seg_no < seg_count; seg_no++)
@@ -103,29 +100,8 @@ int main(int argc, char *argv[])
         memset(buffer, 0, PACKET_DATA_PAYLOAD_SIZE);
         strcpy(buffer, line);
         buffer[strcspn(buffer, "\n")] = 0;
-        buffLen = strlen(buffer);
         memset(line, 0, len);
-
-        // Error handling special cases:
-        if (client_id == ERROR_SPECIAL_CLIENT)
-        {
-            if (strcmp(buffer, ERR_OOS_MSG) == 0)
-            {
-                printf("Error handling: Case 1: Out of Sequence segment number\n");
-            }
-            else if (strcmp(buffer, ERR_LEN_MSG) == 0)
-            {
-                printf("Error handling: Case 2: Length Mismatch\n");
-            }
-            else if (strcmp(buffer, ERR_END_MSG) == 0)
-            {
-                printf("Error handling: Case 3: End of Packet Missing\n");
-            }
-            else if (strcmp(buffer, ERR_DUP_MSG) == 0)
-            {
-                printf("Error handling: Case 4: Duplicate Packet check done by comparing sequence number as specified in instruction\n");
-            }
-        }
+        // TODO: Read Subscriber Access Permission instead!!!
 
         response_received = false;
         // Retry up to 3 times, first time (0th) is the original packet
@@ -137,16 +113,14 @@ int main(int argc, char *argv[])
             if (ack_timer_reset_count == 0)
             {
                 printf("Sending packet: %d\n", input_seg_no);
-                reset_data_packet(&data_packet);
-                update_data_packet(&data_packet, client_id, input_seg_no, buffLen, buffer);
-                if (!is_valid_data_packet(&data_packet))
-                    error("Error: Invalid data packet\n");
+                reset_subscriber_packet(&subscriber_packet);
+                update_subscriber_packet(&subscriber_packet, client_id, SUB_ACC_PER, input_seg_no, technology, src_sub_no);
+                if (!is_valid_subscriber_packet(&subscriber_packet))
+                    error("Error: Invalid subscriber packet\n");
 #ifdef DEBUGGING
                 else
-                    printf("Data packet formatted okay\n");
-                char *data_str = data_packet_to_string(&data_packet);
-                printf("Sending DATA packet: %s", data_str);
-                free(data_str);
+                    printf("subscriber packet formatted okay\n");
+                print_subscriber_packet(&subscriber_packet);
 #endif
             }
             else
@@ -154,31 +128,15 @@ int main(int argc, char *argv[])
                 printf("Error:\tACK_TIMER timed out!\nRetrying attempt %d\n", ack_timer_reset_count);
             }
 
-            // Error handling cases: Modifications to correct Data packet:
-            if (client_id == ERROR_SPECIAL_CLIENT)
-            {
-                if (strcmp(buffer, ERR_LEN_MSG) == 0)
-                {
-                    // printf("Error handling: Case 2: Length Mismatch\n");
-                    data_packet.length = (data_packet.length + 1) % PACKET_DATA_PAYLOAD_SIZE;
-                }
-                if (strcmp(buffer, ERR_END_MSG) == 0)
-                {
-                    // printf("Error handling: Case 3: End of Packet Missing\n");
-                    data_packet.end_packet = 0xFFF0;
-                }
-            }
-
             // Send message to server
-            n = sendto(sock, (const data_packet_t *)&data_packet,
-                       data_packet_size, 0, (const struct sockaddr *)&server, length);
+            n = sendto(sock, (const data_packet_t *)&subscriber_packet,
+                       subscriber_packet_size, 0, (const struct sockaddr *)&server, length);
             if (n < 0)
                 error("Error: Sendto");
 
-            // Peek the response packet: Non-Blocking-ly
-            // NOTE: Peek only works on non-UNIX systems, for example doesn't work on WSL-Ubuntu
-            bzero(peek_buff, sizeof(peek_buff));
-            n = recvfrom(sock, peek_buff, sizeof(peek_buff), MSG_PEEK | MSG_TRUNC, (struct sockaddr *)&recv_from, &length);
+            // Get response from server:
+            reset_subscriber_packet(&subscriber_packet);
+            n = recvfrom(sock, &subscriber_packet, subscriber_packet_size, 0, (struct sockaddr *)&recv_from, &length);
             if (n == -1 && errno == EAGAIN)
             {
                 if (ack_timer_reset_count == ACK_TIMER_RETRY_COUNT)
@@ -189,65 +147,18 @@ int main(int argc, char *argv[])
                 continue;
             }
             else if (n < 0)
-                error("Error: peek Recvfrom");
-#ifdef DEBUGGING
-            printf("Peeked packet size: %d\n", n);
-#endif
+                error("Error: Recvfrom");
+            response_received = true;
+            subscriber_status = subscriber_packet.packet_type;
 
-            // Processing the Response from Server:
-            if (n == ack_packet_size)
-            {
-                memset(&ack_packet, 0, ack_packet_size);
-                n = recvfrom(sock, &ack_packet, ack_packet_size, 0, (struct sockaddr *)&recv_from, &length);
-                if (n < 0)
-                    error("Error: recvfrom");
-                response_received = true;
-
-                if (ack_packet.received_segment_no == input_seg_no)
-                    printf("Received matching ACK segment number %d\n", input_seg_no);
-                else
-                    printf("Received MISMATCHING ACK segment number %d\n", ack_packet.received_segment_no);
-                if (is_valid_ack_packet(&ack_packet))
-                    printf("Received valid ACK packet.\n");
-#ifdef DEBUGGING
-                else
-                    printf("Received invalid ACK packet.\n");
-                char *ack_str = ack_packet_to_string(&ack_packet);
-                printf("Received ACK packet: %s", ack_str);
-                free(ack_str);
-#endif
-                break;
-            }
-            else if (n == reject_packet_size)
-            {
-                memset(&reject_packet, 0, reject_packet_size);
-                n = recvfrom(sock, &reject_packet, reject_packet_size, 0, (struct sockaddr *)&recv_from, &length);
-                if (n < 0)
-                    error("Error: recvfrom");
-                response_received = true;
-
-                // printf("Raw reject packet: 0x%40X\n", reject_packet);
-                if (is_valid_reject_packet(&reject_packet))
-                    printf("Received valid REJ packet\n");
-#ifdef DEBUGGING
-                else
-                    printf("ERROR: REJ packet formatted improperly!\n");
-                char *rej_str = reject_packet_to_string(&reject_packet);
-                printf("Received REJECT packet: %s\n", rej_str);
-                free(rej_str);
-
-#endif
-                printf("Reject sub code: 0x%04X\n", reject_packet.sub_code);
-                break;
-                // If rejected, move on to next packet to send
-            }
-            else
-            {
-                // This resonse is not an ACK or REJECT packet, so should not count as received properly
-                char *errString = "";
-                sprintf(errString, "Error: Invalid packet size/type received: %d\n", n);
-                error(errString);
-            }
+            // Print response from server:
+            printf("Responding with Subscriber status: 0x%04X\t", subscriber_status);
+            if (subscriber_status == SUB_NOT_PAID)
+                printf("%s\n", SUB_NOT_PAID_MSG);
+            else if (subscriber_status == SUB_NOT_EXIST)
+                printf("%s\n", SUB_NOT_EXIST_MSG);
+            else if (subscriber_status == SUB_ACC_OK)
+                printf("%s\n", SUB_ACC_OK_MSG);
         }
         printf("\n");
     }
