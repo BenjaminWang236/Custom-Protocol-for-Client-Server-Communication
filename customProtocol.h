@@ -82,6 +82,7 @@ typedef enum {
 } SUBSCRIBER_TECHNOLOGY;
 
 #define SUBSCRIBER_PAYLOAD_SIZE 6
+#define PHONE_NUMBER_SIZE 10
 
 // Custom Protocol Subscriber Access Permission Request & Response Types:
 typedef enum
@@ -165,7 +166,7 @@ void timeout(void);
  * @return SUBSCRIBER_PACKET_TYPE 
  */
 SUBSCRIBER_PACKET_TYPE verify_subscriber(
-    verification_database_t verification_database[], uint8_t db_size, subscriber_packet_t *subscriber_packet)
+    verification_database_t verification_database[], uint8_t db_size, subscriber_packet_t *subscriber_packet);
 
 // Validating that packet is correct
 bool is_valid_data_packet(data_packet_t *packet);
@@ -213,5 +214,10 @@ char *ack_packet_to_string(ack_packet_t *packet);
  * @return char* string representation of packet
  */
 char *reject_packet_to_string(reject_packet_t *packet);
+
+// Print Verification Database:
+void print_verification_database(verification_database_t verification_database[], uint8_t db_size);
+// Print Subscriber Packet:
+void print_subscriber_packet(subscriber_packet_t *subscriber_packet);
 
 #endif

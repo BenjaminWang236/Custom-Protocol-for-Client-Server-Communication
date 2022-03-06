@@ -37,10 +37,21 @@ void timeout(void)
     printf("Timeout reached\n");
 }
 
-// TODO: Implement the function
-SUBSCRIBER_PACKET_TYPE verify_subscriber(verification_database_t verification_database[], uint8_t db_size, subscriber_packet_t *subscriber_packet)
+SUBSCRIBER_PACKET_TYPE verify_subscriber(
+    verification_database_t verification_database[], uint8_t db_size, subscriber_packet_t *subscriber_packet)
 {
-    //
+    for (int i = 0; i < db_size; i++)
+    {
+        if (verification_database[i].src_sub_no == subscriber_packet->src_sub_no &&
+            verification_database[i].technology == subscriber_packet->technology)
+        {
+            if (verification_database[i].paid)
+                return SUB_ACC_OK;
+            else
+                return SUB_NOT_PAID;
+        }
+    }
+    return SUB_NOT_EXIST;
 }
 
 bool is_valid_data_packet(data_packet_t *packet)
@@ -192,7 +203,8 @@ void reset_subscriber_packet(subscriber_packet_t *packet)
     packet->end_packet = END_PACKET;
 }
 
-void update_data_packet(data_packet_t *packet, uint8_t client_id, uint8_t segment_no, uint8_t length, char *payload)
+void update_data_packet(
+    data_packet_t *packet, uint8_t client_id, uint8_t segment_no, uint8_t length, char *payload)
 {
     packet->client_id = client_id;
     packet->segment_no = segment_no;
@@ -208,13 +220,16 @@ void update_ack_packet(ack_packet_t *packet, uint8_t client_id, uint8_t received
     packet->client_id = client_id;
     packet->received_segment_no = received_segment_no;
 }
-void update_reject_packet(reject_packet_t *packet, uint8_t client_id, REJECT_SUB_CODE sub_code, uint8_t received_segment_no)
+void update_reject_packet(
+    reject_packet_t *packet, uint8_t client_id, REJECT_SUB_CODE sub_code, uint8_t received_segment_no)
 {
     packet->client_id = client_id;
     packet->sub_code = sub_code;
     packet->received_segment_no = received_segment_no;
 }
-void update_subscriber_packet(subscriber_packet_t *packet, uint8_t client_id, SUBSCRIBER_PACKET_TYPE packet_type, uint8_t segment_no, uint8_t technology, uint32_t src_sub_no)
+void update_subscriber_packet(
+    subscriber_packet_t *packet, uint8_t client_id, SUBSCRIBER_PACKET_TYPE packet_type,
+    uint8_t segment_no, uint8_t technology, uint32_t src_sub_no)
 {
     packet->client_id = client_id;
     packet->packet_type = packet_type;
@@ -298,4 +313,27 @@ char *reject_packet_to_string(reject_packet_t *packet)
         packet->end_packet);
     str[REJECT_PACKET_STRING_SIZE] = '\0';
     return str;
+}
+
+void print_verification_database(verification_database_t verification_database[], uint8_t db_size)
+{
+    char phone[PHONE_NUMBER_SIZE + 1]; // +1 for '\0'
+    printf("Verification Database:\nSubscriber Number\tTechnology\tPaid\n");
+    for (int i = 0; i < db_size; i++)
+    {
+        memset(phone, DEFAULT_VALUE, PHONE_NUMBER_SIZE + 1);
+        sprintf(phone, "%u", verification_database[i].src_sub_no);
+        printf("(%.3s) %.3s-%.4s\t%02u\t%i\n", phone, phone + 3, phone + 6, 
+            verification_database[i].technology, verification_database[i].paid);
+    }
+}
+void print_subscriber_packet(subscriber_packet_t *subscriber_packet)
+{
+    printf("\nSubscriber Packet:\n");
+    printf("client_id=\t%hu\npacket_type=\t0x%04X\nsegment_no=\t%hu\ntechnology=\t%hu\nsrc_sub_no=\t%u\n",
+        subscriber_packet->client_id,
+        (uint16_t)subscriber_packet->packet_type,
+        subscriber_packet->segment_no,
+        subscriber_packet->technology,
+        subscriber_packet->src_sub_no);
 }
