@@ -1,0 +1,14 @@
+(base) suntoria@SUNTORIA-TOWER-PC:~/scu_w2022/COEN 233 Computer Networks TR 7-9 PM/Projects/Assignment_02$ ./myclient ./input_files/access_permission_requests.txt > ./output_files/client_output.txt 
+
+Sending packet: 0
+Server responded with subscriber status: 0xFFFB	Subscriber Access Granted
+
+Sending packet: 1
+Server responded with subscriber status: 0xFFF9	Subscriber Not Paid
+
+Sending packet: 2
+Server responded with subscriber status: 0xFFFA	Subscriber Not Exist
+
+Sending packet: 3
+Server responded with subscriber status: 0xFFFA	Subscriber Not Exist
+

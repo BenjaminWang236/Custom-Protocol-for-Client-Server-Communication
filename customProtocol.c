@@ -323,7 +323,7 @@ void print_verification_database(verification_database_t verification_database[]
     {
         memset(phone, DEFAULT_VALUE, PHONE_NUMBER_SIZE + 1);
         sprintf(phone, "%u", verification_database[i].src_sub_no);
-        printf("(%.3s) %.3s-%.4s\t%02u\t%i\n", phone, phone + 3, phone + 6, 
+        printf("(%.3s) %.3s-%.4s\t\t%02u\t\t%i\n", phone, phone + 3, phone + 6, 
             verification_database[i].technology, verification_database[i].paid);
     }
 }

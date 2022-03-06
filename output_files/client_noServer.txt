@@ -1,0 +1,42 @@
+(base) suntoria@SUNTORIA-TOWER-PC:~/scu_w2022/COEN 233 Computer Networks TR 7-9 PM/Projects/Assignment_02$ time ./myclient ./input_files/access_permission_requests.txt > ./output_files/client_noServer.txt 
+
+Sending packet: 0
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Sending packet: 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Sending packet: 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+Sending packet: 3
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+
+real    0m48.242s
+user    0m0.000s
+sys     0m0.016s

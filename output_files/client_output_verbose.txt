@@ -1,0 +1,49 @@
+(base) suntoria@SUNTORIA-TOWER-PC:~/scu_w2022/COEN 233 Computer Networks TR 7-9 PM/Projects/Assignment_02$ ./myclient ./input_files/access_permission_requests.txt > ./output_files/client_output_verbose.txt
+
+Sending packet: 0
+subscriber packet formatted okay
+
+Subscriber Packet:
+client_id=	236
+packet_type=	0xFFF8
+segment_no=	0
+technology=	4
+src_sub_no=	4085546805
+Server responded with subscriber status: 0xFFFB	Subscriber Access Granted
+
+
+Sending packet: 1
+subscriber packet formatted okay
+
+Subscriber Packet:
+client_id=	236
+packet_type=	0xFFF8
+segment_no=	1
+technology=	3
+src_sub_no=	4086668821
+Server responded with subscriber status: 0xFFF9	Subscriber Not Paid
+
+
+Sending packet: 2
+subscriber packet formatted okay
+
+Subscriber Packet:
+client_id=	236
+packet_type=	0xFFF8
+segment_no=	2
+technology=	5
+src_sub_no=	1234567890
+Server responded with subscriber status: 0xFFFA	Subscriber Not Exist
+
+
+Sending packet: 3
+subscriber packet formatted okay
+
+Subscriber Packet:
+client_id=	236
+packet_type=	0xFFF8
+segment_no=	3
+technology=	5
+src_sub_no=	4086808821
+Server responded with subscriber status: 0xFFFA	Subscriber Not Exist
+

@@ -1,0 +1,19 @@
+(base) suntoria@SUNTORIA-TOWER-PC:~/scu_w2022/COEN 233 Computer Networks TR 7-9 PM/Projects/Assignment_02$ ./myserver
+Verification Database:
+Subscriber Number       Technology      Paid
+(408) 554-6805          04              1
+(408) 666-8821          03              0
+(408) 680-8821          02              1
+
+Received subscriber packet!
+Responding with Subscriber status: 0xFFFB       Subscriber Access Granted
+
+Received subscriber packet!
+Responding with Subscriber status: 0xFFF9       Subscriber Not Paid
+
+Received subscriber packet!
+Responding with Subscriber status: 0xFFFA       Subscriber Not Exist
+
+Received subscriber packet!
+Responding with Subscriber status: 0xFFFA       Subscriber Not Exist
+^C

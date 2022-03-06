@@ -29,7 +29,6 @@ int main(int argc, char *argv[])
     struct sockaddr_in server, recv_from;
     unsigned int length = sizeof(struct sockaddr_in);
     struct hostent *hp;
-    char buffer[PACKET_DATA_PAYLOAD_SIZE];
     bool response_received = false;
     struct timeval tv;
     uint8_t client_id, seg_no = 0, input_seg_no = 0, technology = 0;
@@ -63,7 +62,7 @@ int main(int argc, char *argv[])
     seg_count = atoi(line);
     memset(line, 0, len);
 
-    // Create socket:
+    // Create socket with ACK Timer:
     if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         error("Error: socket");
     tv.tv_sec = ACK_TIMER_WAIT_TIME_MS / 1000;
@@ -95,13 +94,14 @@ int main(int argc, char *argv[])
         getline(&line, &len, fp);
         input_seg_no = atoi(line) % PACKET_GROUP_SIZE;
         memset(line, 0, len);
-        // Read Payload:
+        // Read subscriber technology:
         getline(&line, &len, fp);
-        memset(buffer, 0, PACKET_DATA_PAYLOAD_SIZE);
-        strcpy(buffer, line);
-        buffer[strcspn(buffer, "\n")] = 0;
+        technology = atoi(line);
         memset(line, 0, len);
-        // TODO: Read Subscriber Access Permission instead!!!
+        // Read source subscriber number (phone number):
+        getline(&line, &len, fp);
+        src_sub_no = (uint32_t)atoi(line);
+        memset(line, 0, len);
 
         response_received = false;
         // Retry up to 3 times, first time (0th) is the original packet
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
             subscriber_status = subscriber_packet.packet_type;
 
             // Print response from server:
-            printf("Responding with Subscriber status: 0x%04X\t", subscriber_status);
+            printf("Server responded with subscriber status: 0x%04X\t", subscriber_status);
             if (subscriber_status == SUB_NOT_PAID)
                 printf("%s\n", SUB_NOT_PAID_MSG);
             else if (subscriber_status == SUB_NOT_EXIST)

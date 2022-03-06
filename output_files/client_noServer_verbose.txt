@@ -1,0 +1,88 @@
+(base) suntoria@SUNTORIA-TOWER-PC:~/scu_w2022/COEN 233 Computer Networks TR 7-9 PM/Projects/Assignment_02$ time ./myclient input_files/access_permission_requests.txt > ./output_files/client_noServer_verbose.txt 
+
+Sending packet: 0
+subscriber packet formatted okay
+
+Subscriber Packet:
+client_id=	236
+packet_type=	0xFFF8
+segment_no=	0
+technology=	4
+src_sub_no=	4085546805
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+
+Sending packet: 1
+subscriber packet formatted okay
+
+Subscriber Packet:
+client_id=	236
+packet_type=	0xFFF8
+segment_no=	1
+technology=	3
+src_sub_no=	4086668821
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+
+Sending packet: 2
+subscriber packet formatted okay
+
+Subscriber Packet:
+client_id=	236
+packet_type=	0xFFF8
+segment_no=	2
+technology=	5
+src_sub_no=	1234567890
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+
+Sending packet: 3
+subscriber packet formatted okay
+
+Subscriber Packet:
+client_id=	236
+packet_type=	0xFFF8
+segment_no=	3
+technology=	5
+src_sub_no=	4086808821
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 1
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 2
+
+Error:	ACK_TIMER timed out!
+Retrying attempt 3
+Server does not respond
+
+real    0m48.074s
+user    0m0.000s
+sys     0m0.016s
