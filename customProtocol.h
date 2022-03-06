@@ -48,7 +48,8 @@
 #define MAX_PACKET_SIZE 0xFF
 
 // Custom Protocol Subscriber Technologies:
-typedef enum {
+typedef enum
+{
     SUB_2G = 2,
     SUB_3G,
     SUB_4G,
@@ -75,7 +76,8 @@ typedef enum
 #define VERIFICATION_DATABASE_SIZE 100
 
 // Custom Protocol Verification Database struct:
-typedef struct {
+typedef struct
+{
     uint32_t src_sub_no;
     SUBSCRIBER_TECHNOLOGY technology;
     bool paid;
@@ -103,10 +105,10 @@ void error(const char *msg);
 
 /**
  * @brief Verify if subscriber is in database and has paid or not.
- * 
+ *
  * @param verification_database read from verification_database.txt
  * @param subscriber_packet input subscriber packet
- * @return SUBSCRIBER_PACKET_TYPE 
+ * @return SUBSCRIBER_PACKET_TYPE
  */
 SUBSCRIBER_PACKET_TYPE verify_subscriber(
     verification_database_t verification_database[], uint8_t db_size, subscriber_packet_t *subscriber_packet);
