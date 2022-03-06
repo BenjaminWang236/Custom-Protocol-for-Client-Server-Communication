@@ -73,9 +73,10 @@ int main(int argc, char *argv[])
     server.sin_family = AF_INET;
     if ((hp = gethostbyname((const char *)host)) == 0)
         error("Error: Unknown host");
-    bcopy((char *)hp->h_addr,
-          (char *)&server.sin_addr,
-          hp->h_length);
+    bcopy(
+        (char *)hp->h_addr,
+        (char *)&server.sin_addr,
+        hp->h_length);
     server.sin_port = htons(port);
 
     // Custom protocol's Subscriber Packets:
@@ -129,7 +130,7 @@ int main(int argc, char *argv[])
             }
 
             // Send message to server
-            n = sendto(sock, (const data_packet_t *)&subscriber_packet,
+            n = sendto(sock, (const subscriber_packet_t *)&subscriber_packet,
                        subscriber_packet_size, 0, (const struct sockaddr *)&server, length);
             if (n < 0)
                 error("Error: Sendto");
