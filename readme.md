@@ -1,7 +1,11 @@
 # Programming Assignment #2: Custom Protocol on top of UDP for Client-Server communication for server-side access permission identification
 
-## About this Project
 COEN 233 Introduction to Computer Networks (SCU W2022)
+
+Author: Benjamin Wang (1179478)
+
+---
+## About this Project
 
 Client using customized protocol on top of UDP protocol for requesting identification from server for access permission to the cellular network.
 
@@ -14,8 +18,6 @@ Server `myclient` respond to the Client `myclient` based on the verification res
 1. Subscriber Not Paid
 2. Subscriber Not Exist
 3. Subscriber Access Granted
-
-Author: Benjamin Wang (1179478)
 
 ---
 ## Project Structure
