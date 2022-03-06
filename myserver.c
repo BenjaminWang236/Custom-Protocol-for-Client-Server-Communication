@@ -15,6 +15,13 @@
 
 #include "customProtocol.h"
 
+/**
+ * @brief Read in the verification database from file.
+ *
+ * @param verification_database Pointer to the verification database.
+ * @param filename string for the filename or path to the file.
+ * @return uint8_t database size.
+ */
 uint8_t read_verification_database(verification_database_t verification_database[], char *filename)
 {
     // Read in Verification Database from file's Variables:
