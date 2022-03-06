@@ -15,42 +15,56 @@
 
 #include "customProtocol.h"
 
-uint16_t validate_client_data_packet(bool *packet_seq_started, uint8_t *packet_seq_num, data_packet_t *curr_data, data_packet_t *prev_data)
+uint8_t read_verification_database(verification_database_t verification_database[])
 {
-    // if (*packet_seq_started && data_packet_equals(curr_data, prev_data))
-    if (*packet_seq_started && curr_data->segment_no == prev_data->segment_no)
+    // Read in Verification Database from file's Variables:
+    char *filename = "verification_database.txt";   // Specified by instruction!
+    FILE *fp;
+    char *line = NULL;
+    size_t len = 0;
+    uint8_t db_size = 0;
+    
+    // Open file:
+    fp = fopen(filename, "r");
+    if (fp == NULL)
     {
-        printf("ERROR: Duplicate packet received!\n");
-        return REJECT_DUPLICATE_PACKET;
-    }
-    if (*packet_seq_started && curr_data->segment_no != (*packet_seq_num + 1))
-    {
-#ifdef DEBUGGING
-        printf("Error: Expected sequence number %d\n", *packet_seq_num + 1);
-#endif
-        printf("ERROR: Out of order packet!\n");
-        return REJECT_OUT_OF_SEQUENCE;
-    }
-    else if (!(*packet_seq_started) && curr_data->segment_no != 0)
-    {
-#ifdef DEBUGGING
-        printf("Error: Expected sequence number %d\n", 0);
-#endif
-        printf("ERROR: Out of order packet!\n");
-        return REJECT_OUT_OF_SEQUENCE;
-    }
-    if (strlen(curr_data->payload) != curr_data->length)
-    {
-        printf("ERROR: Length Mismatch!\n");
-        return REJECT_LENGTH_MISMATCH;
-    }
-    if (curr_data->end_packet != END_PACKET)
-    {
-        printf("ERROR: End of Packet Missing!\n");
-        return REJECT_END_OF_PACKET_MISSING;
+        error("Error opening file");
     }
 
-    return PACKET_OK;
+    // Read the nuumber of database entries:
+    getline(&line, &len, fp);
+    db_size = atoi(line);
+    memset(line, 0, len);
+
+    // Check against maximum database size:
+    if (db_size > VERIFICATION_DATABASE_SIZE)
+        error("ERROR: Database size exceeds maximum size\n");
+
+    // Read in verification database entries:
+    for (int i = 0; i < db_size; i++)
+    {
+        // Read subscriber number (phone number):
+        getline(&line, &len, fp);
+        verification_database[i].src_sub_no = (uint32_t)atoi(line);
+        memset(line, 0, len);
+
+        // Read subscriber technology (2G - 5G):
+        getline(&line, &len, fp);
+        verification_database[i].technology = (SUBSCRIBER_TECHNOLOGY)atoi(line);
+        memset(line, 0, len);
+
+        // Read subscriber Paid status:
+        getline(&line, &len, fp);
+        verification_database[i].paid = (bool)atoi(line);
+        memset(line, 0, len);
+    }
+
+    // Housekeeping:
+    fclose(fp);
+    if (line)
+        free(line);
+    
+    return db_size;
 }
 
 /**
@@ -66,8 +80,6 @@ int main(int argc, char *argv[])
     int sock, length, n, port;
     socklen_t clientlen;
     struct sockaddr_in server, client;
-    // char buf[MAXLINE];
-    // char *hello = "Hello from server";
 
     // Checking if port number is provided
     if (argc == 1)
@@ -99,101 +111,50 @@ int main(int argc, char *argv[])
     clientlen = sizeof(client);
     bzero(&client, clientlen);
 
-    // Custom protocol's Packets:
-    data_packet_t data_packet = {};
-    size_t data_packet_size = sizeof(data_packet);
-    ack_packet_t ack_packet = {};
-    size_t ack_packet_size = sizeof(ack_packet);
-    reject_packet_t reject_packet = {};
-    size_t reject_packet_size = sizeof(reject_packet);
-    data_packet_t prev_data_packet = {}; // For checking duplicates
+    // Initializing verification database
+    verification_database_t verification_database[VERIFICATION_DATABASE_SIZE] = {};
+    uint8_t db_size = read_verification_database(verification_database);
 
-    // Packet Tracker:
-    bool packet_seq_started = false;
-    uint8_t packet_seq_num = 0;
-    uint16_t packet_status = 1; // 0 if OK, else REJECT sub code
+#ifdef PRINT_DATABASE
+    // Print out Verification Database:
+    print_verification_database(verification_database, db_size);
+#endif
+
+    // Custom protocol's Subscriber Packets:
+    subscriber_packet_t subscriber_packet = {};
+    uint8_t subscriber_packet_size = sizeof(subscriber_packet);
+    SUBSCRIBER_PACKET_TYPE subscriber_status = DEFAULT_VALUE;
 
     // Server runs forever, I guess
     while (1)
     {
-        memset(&data_packet, 0, data_packet_size);
-        n = recvfrom(sock, &data_packet, data_packet_size, 0, (struct sockaddr *)&client, &clientlen);
+        // Receive Access Permission request Subscriber Packet:
+        memset(&subscriber_packet, DEFAULT_VALUE, subscriber_packet_size);
+        n = recvfrom(sock, &subscriber_packet, subscriber_packet_size, 
+            0, (struct sockaddr *)&client, &clientlen);
         if (n < 0)
             error("ERROR: recvfrom");
-        printf("\nReceived packet!\n");
+        printf("\nReceived subscriber packet!\n");
+        if (!is_valid_subscriber_packet(&subscriber_packet))
+            error("ERROR: Invalid subscriber packet!\n");
 #ifdef DEBUGGING
-        char *data_str = data_packet_to_string(&data_packet);
-        printf("Received data packet: %s", data_str);
-        free(data_str);
-#endif
-
-        // ACK or REJ logic here: All 4 Server Reject Sub-Code cases are handled here
-        packet_status = validate_client_data_packet(&packet_seq_started, &packet_seq_num, &data_packet, &prev_data_packet);
-
-        if (packet_status == PACKET_OK)
-        {
-#ifdef DEBUGGING
-            printf("Packet OK!\n");
-#endif
-            // Tracking the packet sequence: Since packet's valid
-            if (!packet_seq_started)
-                packet_seq_started = true;
-            else
-                packet_seq_num = data_packet.segment_no;
-
-            // Saving the current packet as next "prev_data_packet" for duplicate checking
-            memset(&prev_data_packet, 0, data_packet_size);
-            memcpy(&prev_data_packet, &data_packet, data_packet_size);
-
-            // ACK packet response:
-            reset_ack_packet(&ack_packet);
-            update_ack_packet(&ack_packet, data_packet.client_id, packet_seq_num);
-            if (!is_valid_ack_packet(&ack_packet))
-                error("ERROR: Invalid ACK packet");
-#ifdef DEBUGGING
-            else
-                printf("ACK packet formatted properly!\n");
-#endif
-            // Sending ACK response back to Client
-            n = sendto(sock, &ack_packet, ack_packet_size,
-                       0, (const struct sockaddr *)&client, clientlen);
-        }
         else
-        {
-#ifdef DEBUGGING
-            printf("Packet Rejected with REJ sub code 0x%04X\n", packet_status);
+            printf("Valid subscriber packet!\n");
+        print_subscriber_packet(&subscriber_packet);
 #endif
-            // REJ packet response:
-            reset_reject_packet(&reject_packet);
-            update_reject_packet(&reject_packet, data_packet.client_id, packet_status, packet_seq_num);
-            if (!is_valid_reject_packet(&reject_packet))
-                error("ERROR: REJ packet formatted improperly!\n");
-#ifdef DEBUGGING
-            else
-                printf("REJ packet formatted properly!\n");
-            char *rej_str = reject_packet_to_string(&reject_packet);
-            printf("Sending response REJ packet: %s\n", rej_str);
-            free(rej_str);
-#endif
-            // Sending ACK response back to Client
-            n = sendto(sock, &reject_packet, reject_packet_size,
-                       0, (const struct sockaddr *)&client, clientlen);
-        }
+
+        // Verify subscriber by checking database:
+        subscriber_status = verify_subscriber(
+            verification_database, db_size, &subscriber_packet);
+
+        // Set responding subscriber packet's status:
+        subscriber_packet.packet_type = subscriber_status;
+
+        // Sending Subscriber status response back to Client
+        n = sendto(sock, &subscriber_packet, subscriber_packet_size,
+                   0, (const struct sockaddr *)&client, clientlen);
         if (n < 0)
             error("ERROR: sendto");
-
-        // Resetting the packet status after max of 5 packets
-        if (packet_seq_started && packet_seq_num >= (PACKET_GROUP_SIZE - 1))
-        {
-#ifdef DEBUGGING
-            printf("SERVER RESETTING SEQ NUM AND SEQ STARTED\n");
-#endif
-            packet_seq_num = 0;
-            packet_seq_started = false;
-        }
-#ifdef DEBUGGING
-        printf("\n\n");
-#endif
     }
 
     close(sock);
