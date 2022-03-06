@@ -37,6 +37,12 @@ void timeout(void)
     printf("Timeout reached\n");
 }
 
+// TODO: Implement the function
+SUBSCRIBER_PACKET_TYPE verify_subscriber(verification_database_t verification_database[], uint8_t db_size, subscriber_packet_t *subscriber_packet)
+{
+    //
+}
+
 bool is_valid_data_packet(data_packet_t *packet)
 {
     if (packet->start_packet != START_PACKET)
@@ -61,7 +67,6 @@ bool is_valid_data_packet(data_packet_t *packet)
     }
     return true;
 }
-
 bool is_valid_ack_packet(ack_packet_t *packet)
 {
     if (packet->start_packet != START_PACKET)
@@ -86,7 +91,6 @@ bool is_valid_ack_packet(ack_packet_t *packet)
     }
     return true;
 }
-
 bool is_valid_reject_packet(reject_packet_t *packet)
 {
     if (packet->start_packet != START_PACKET)
@@ -108,6 +112,37 @@ bool is_valid_reject_packet(reject_packet_t *packet)
     if (packet->received_segment_no >= PACKET_GROUP_SIZE) // [0 - (size-1)]
     {
         printf("Error: Invalid received segment number %hu\n", packet->received_segment_no);
+        return false;
+    }
+    if (packet->end_packet != END_PACKET)
+    {
+        printf("Error: Invalid end packet 0x%04X\n", packet->end_packet);
+        return false;
+    }
+    return true;
+}
+bool is_valid_subscriber_packet(subscriber_packet_t *packet)
+{
+    if (packet->start_packet != START_PACKET)
+    {
+        printf("Error: Invalid start packet 0x%04X\n", packet->start_packet);
+        return false;
+    }
+    if (packet->packet_type < SUB_ACC_PER ||
+        packet->packet_type > SUB_ACC_OK)
+    {
+        printf("Error: Invalid packet_type 0x%04X\n", packet->packet_type);
+        return false;
+    }
+    if (packet->segment_no >= PACKET_GROUP_SIZE) // [0 - 4]
+    {
+        printf("Error: Invalid segment number %hu\n", packet->segment_no);
+        return false;
+    }
+    if (packet->technology < SUB_2G ||
+        packet->technology > SUB_5G)
+    {
+        printf("Error: Invalid technology %hu\n", packet->technology);
         return false;
     }
     if (packet->end_packet != END_PACKET)
@@ -145,6 +180,17 @@ void reset_reject_packet(reject_packet_t *packet)
     packet->received_segment_no = DEFAULT_VALUE;
     packet->end_packet = END_PACKET;
 }
+void reset_subscriber_packet(subscriber_packet_t *packet)
+{
+    packet->start_packet = START_PACKET;
+    packet->client_id = DEFAULT_VALUE;
+    packet->packet_type = SUB_ACC_PER;
+    packet->segment_no = DEFAULT_VALUE;
+    packet->length = SUBSCRIBER_PAYLOAD_SIZE;
+    packet->technology = DEFAULT_VALUE;
+    packet->src_sub_no = DEFAULT_VALUE;
+    packet->end_packet = END_PACKET;
+}
 
 void update_data_packet(data_packet_t *packet, uint8_t client_id, uint8_t segment_no, uint8_t length, char *payload)
 {
@@ -167,6 +213,15 @@ void update_reject_packet(reject_packet_t *packet, uint8_t client_id, REJECT_SUB
     packet->client_id = client_id;
     packet->sub_code = sub_code;
     packet->received_segment_no = received_segment_no;
+}
+void update_subscriber_packet(subscriber_packet_t *packet, uint8_t client_id, SUBSCRIBER_PACKET_TYPE packet_type, uint8_t segment_no, uint8_t technology, uint32_t src_sub_no)
+{
+    packet->client_id = client_id;
+    packet->packet_type = packet_type;
+    // packet->segment_no = segment_no % PACKET_GROUP_SIZE;
+    packet->segment_no = segment_no;
+    packet->technology = technology;
+    packet->src_sub_no = src_sub_no;
 }
 
 bool data_packet_equals(data_packet_t *packet1, data_packet_t *packet2)

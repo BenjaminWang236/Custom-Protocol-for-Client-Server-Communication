@@ -73,6 +73,45 @@ typedef enum
     REJECT_DUPLICATE_PACKET
 } REJECT_SUB_CODE;
 
+// Custom Protocol Subscriber Technologies:
+typedef enum {
+    SUB_2G = 2,
+    SUB_3G,
+    SUB_4G,
+    SUB_5G
+} SUBSCRIBER_TECHNOLOGY;
+
+#define SUBSCRIBER_PAYLOAD_SIZE 6
+
+// Custom Protocol Subscriber Access Permission Request & Response Types:
+typedef enum
+{
+    SUB_ACC_PER = 0xFFF8,
+    SUB_NOT_PAID,
+    SUB_NOT_EXIST,
+    SUB_ACC_OK
+} SUBSCRIBER_PACKET_TYPE;
+
+// Custom Protocol Verification Database struct:
+typedef struct {
+    uint32_t src_sub_no;
+    SUBSCRIBER_TECHNOLOGY technology;
+    bool paid;
+} __attribute__((packed)) verification_database_t;
+
+// Custom Protocol Subscriber Access Permission Request & Response Packet struct:
+typedef struct
+{
+    uint16_t start_packet;
+    uint8_t client_id;
+    SUBSCRIBER_PACKET_TYPE packet_type;
+    uint8_t segment_no;
+    uint8_t length;
+    uint8_t technology;
+    uint32_t src_sub_no;
+    uint16_t end_packet;
+} __attribute__((packed)) subscriber_packet_t; // Size 15
+
 // Custom Protocol Packet Structure Sizes
 #define PACKET_DATA_PAYLOAD_SIZE 255
 // Custom Protocol Packet Structures:
@@ -118,20 +157,33 @@ void error(const char *msg);
  */
 void timeout(void);
 
+/**
+ * @brief Verify if subscriber is in database and has paid or not.
+ * 
+ * @param verification_database read from verification_database.txt
+ * @param subscriber_packet input subscriber packet
+ * @return SUBSCRIBER_PACKET_TYPE 
+ */
+SUBSCRIBER_PACKET_TYPE verify_subscriber(
+    verification_database_t verification_database[], uint8_t db_size, subscriber_packet_t *subscriber_packet)
+
 // Validating that packet is correct
 bool is_valid_data_packet(data_packet_t *packet);
 bool is_valid_ack_packet(ack_packet_t *packet);
 bool is_valid_reject_packet(reject_packet_t *packet);
+bool is_valid_subscriber_packet(subscriber_packet_t *packet);
 
 // Packet reset to default values. Clear payload array if it exists.
 void reset_data_packet(data_packet_t *packet);
 void reset_ack_packet(ack_packet_t *packet);
 void reset_reject_packet(reject_packet_t *packet);
+void reset_subscriber_packet(subscriber_packet_t *packet);
 
 // Packet setters. Note: Should call reset() before setting values.
 void update_data_packet(data_packet_t *packet, uint8_t client_id, uint8_t segment_no, uint8_t length, char *payload);
 void update_ack_packet(ack_packet_t *packet, uint8_t client_id, uint8_t received_segment_no);
 void update_reject_packet(reject_packet_t *packet, uint8_t client_id, REJECT_SUB_CODE sub_code, uint8_t received_segment_no);
+void update_subscriber_packet(subscriber_packet_t *packet, uint8_t client_id, SUBSCRIBER_PACKET_TYPE packet_type, uint8_t segment_no, uint8_t technology, uint32_t src_sub_no);
 
 // Data Packet Comparison Equal method: For checking duplicate packets
 bool data_packet_equals(data_packet_t *packet1, data_packet_t *packet2);
