@@ -155,9 +155,25 @@ int main(int argc, char *argv[])
         // Verify subscriber by checking database:
         subscriber_status = verify_subscriber(
             verification_database, db_size, &subscriber_packet);
+        printf("Responding with Subscriber status: 0x%04X\t", subscriber_status);
+        if (subscriber_status == SUB_NOT_PAID)
+            printf("%s\n", SUB_NOT_PAID_MSG);
+        else if (subscriber_status == SUB_NOT_EXIST)
+            printf("%s\n", SUB_NOT_EXIST_MSG);
+        else if (subscriber_status == SUB_ACC_OK)
+            printf("%s\n", SUB_ACC_OK_MSG);
 
         // Set responding subscriber packet's status:
         subscriber_packet.packet_type = subscriber_status;
+
+        // Checking responding subscriber response integrity:
+        if (!is_valid_subscriber_packet(&subscriber_packet))
+            error("ERROR: Invalid response subscriber packet!\n");
+#ifdef DEBUGGING
+        else
+            printf("Valid response subscriber packet!\n");
+        print_subscriber_packet(&subscriber_packet);
+#endif
 
         // Sending Subscriber status response back to Client
         n = sendto(sock, &subscriber_packet, subscriber_packet_size,
