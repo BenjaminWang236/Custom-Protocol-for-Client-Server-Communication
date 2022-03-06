@@ -18,12 +18,12 @@
 uint8_t read_verification_database(verification_database_t verification_database[], char *filename)
 {
     // Read in Verification Database from file's Variables:
-    // char *filename = "verification_database.txt"; 
+    // char *filename = "verification_database.txt";
     FILE *fp;
     char *line = NULL;
     size_t len = 0;
     uint8_t db_size = 0;
-    
+
     // Open file:
     fp = fopen(filename, "r");
     if (fp == NULL)
@@ -63,7 +63,7 @@ uint8_t read_verification_database(verification_database_t verification_database
     fclose(fp);
     if (line)
         free(line);
-    
+
     return db_size;
 }
 
@@ -139,8 +139,8 @@ int main(int argc, char *argv[])
     {
         // Receive Access Permission request Subscriber Packet:
         memset(&subscriber_packet, DEFAULT_VALUE, subscriber_packet_size);
-        n = recvfrom(sock, &subscriber_packet, subscriber_packet_size, 
-            0, (struct sockaddr *)&client, &clientlen);
+        n = recvfrom(sock, &subscriber_packet, subscriber_packet_size,
+                     0, (struct sockaddr *)&client, &clientlen);
         if (n < 0)
             error("ERROR: recvfrom");
         printf("\nReceived subscriber packet!\n");
