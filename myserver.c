@@ -15,10 +15,10 @@
 
 #include "customProtocol.h"
 
-uint8_t read_verification_database(verification_database_t verification_database[])
+uint8_t read_verification_database(verification_database_t verification_database[], char *filename)
 {
     // Read in Verification Database from file's Variables:
-    char *filename = "verification_database.txt";   // Specified by instruction!
+    // char *filename = "verification_database.txt"; 
     FILE *fp;
     char *line = NULL;
     size_t len = 0;
@@ -80,15 +80,24 @@ int main(int argc, char *argv[])
     int sock, length, n, port;
     socklen_t clientlen;
     struct sockaddr_in server, client;
+    char *filename;
 
     // Checking if port number is provided
     if (argc == 1)
+    {
         port = PORT;
+        filename = "./input_files/verification_database.txt"; // Specificed by instruction
+    }
     else if (argc == 2)
         port = atoi(argv[1]);
+    else if (argc == 3)
+    {
+        port = atoi(argv[1]);
+        filename = argv[2];
+    }
     else
     {
-        fprintf(stderr, "ERROR: no port provided\n");
+        fprintf(stderr, "ERROR: no port & verification_database-filename provided\n");
         exit(EXIT_FAILURE);
     }
 
@@ -113,7 +122,7 @@ int main(int argc, char *argv[])
 
     // Initializing verification database
     verification_database_t verification_database[VERIFICATION_DATABASE_SIZE] = {};
-    uint8_t db_size = read_verification_database(verification_database);
+    uint8_t db_size = read_verification_database(verification_database, filename);
 
 #ifdef PRINT_DATABASE
     // Print out Verification Database:
