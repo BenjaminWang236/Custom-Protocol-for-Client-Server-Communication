@@ -94,6 +94,11 @@ typedef enum
     SUB_ACC_OK
 } SUBSCRIBER_PACKET_TYPE;
 
+#define SUB_ACC_PER_MSG "Subscriber Access Permission Request"
+#define SUB_NOT_PAID_MSG "Subscriber Not Paid"
+#define SUB_NOT_EXIST_MSG "Subscriber Not Exist"
+#define SUB_ACC_OK_MSG "Subscriber Access Granted"
+
 #define VERIFICATION_DATABASE_SIZE 100
 
 // Custom Protocol Verification Database struct:
