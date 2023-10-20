@@ -1,4 +1,4 @@
-# Programming Assignment #2: Custom Protocol on top of UDP for Client-Server communication for server-side access permission identification
+# Custom Protocol on top of UDP for Client-Server communication for server-side access permission identification
 
 COEN 233 Introduction to Computer Networks (SCU W2022)
 
